@@ -45,9 +45,9 @@ def initial_solution():
     return (0, 0)
 
 
-M = 500000
-P = 1000
-L = 10000
+M = 100  # iterações
+P = 10000  # perturbações
+L = 1500000  # sucessos
 a = 0.8
 
 # print setup
@@ -56,7 +56,6 @@ a = 0.8
 s0 = initial_solution()
 s = s0
 t = initial_temperature(s0)
-print("Initial temperature: %f" % t)
 
 j = 1
 nsucc = 0
@@ -74,12 +73,10 @@ while True:
         if nsucc >= L or i >= P:  # equilibrium
             break
 
+    print("%d %f %f %f %f" % (j, t, f(s), s[0], s[1]))
+
     t = a * t
     j = j + 1
 
     if nsucc == 0 or j >= M:  # stop condition
         break
-
-# print best solution
-print("final temperature = %f" % t)
-print("f(%f, %f) = %f" % (s[0], s[1], f(s)))
