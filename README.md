@@ -1,7 +1,17 @@
 # cut2d-sa
 
-## ToDo:
+For the [Himmelblau's function][1] the output of cut2d-sa is a 5-tuple:
+(iteration number, temperature, function value, x, y).
 
-### Read this:
+To get the file with output to plot run:
 
-- https://www.yumpu.com/en/document/view/31336495/simulated-annealing-based-algorithm-for-the-2d-bin-packing-
+```
+$ ./cut2d-sa > ent
+```
+
+To plot the file run:
+```
+$ ./temperature-plotter.py < ent
+```
+
+[1]: https://en.wikipedia.org/wiki/Himmelblau%27s_function
