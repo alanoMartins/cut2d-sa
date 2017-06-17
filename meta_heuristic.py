@@ -14,8 +14,7 @@ def perturba(temperatures, actual_index, interator):
         p = math.exp(-diff / interator)
         return next_idx if random.random() < p else actual_index  # Permuta ??
 
-def sa_alt():
-    temperatures = initial_temperature(L)
+def execute(temperatures):
     initial_index = random.choice(xrange(0, len(temperatures)))  # Ele deu uma dica de como escolher o primeiro
     indice_local = initial_index
     indice_melhor = initial_index

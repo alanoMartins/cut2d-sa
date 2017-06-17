@@ -64,4 +64,4 @@ def sa():
 
 
 
-sa.sa_alt()
+sa.execute()
