@@ -1,45 +1,64 @@
-import random
 import math
+import random
 
-def initial_temperature(size):
-    return [random.randrange(size) for p in range(0, size)]
 
-def perturba(temperatures, actual_index, interator):
-    next_idx = random.choice(xrange(0, len(temperatures)))
-    diff = temperatures[next_idx] - temperatures[actual_index]
+class SimulatedAnnealing:
+    MAX_INTERATIONS = 100  # iterações
+    MAX_RANDOMIZE = 10000  # perturbações
+    MAX_SUCESS = 1500000  # sucessos
+    ALPHA = 0.8
 
-    if diff < 0:
-        return next_idx
-    else:
-        p = math.exp(-diff / interator)
-        return next_idx if random.random() < p else actual_index  # Permuta ??
+    @staticmethod
+    def __himmelblau(x, y):
+        return (x * x + y - 11) * (x * x + y - 11) + (x + y * y - 7) * (x + y * y - 7)
 
-def execute(temperatures):
-    initial_index = random.choice(xrange(0, len(temperatures)))  # Ele deu uma dica de como escolher o primeiro
-    indice_local = initial_index
-    indice_melhor = initial_index
-    interator = 1
-    alpha = 0.8
-    LIMIT = 1000
-    LIMIT_REPEAT = 50
-    counter_breaker = 0
+    @staticmethod
+    def __cost(self, solution):
+        return self.__himmelblau(solution[0], solution[1])
 
-    while interator < LIMIT:
+    def __diff_solution(self, solutionA, solutionB):
+        return self.__cost(self, solutionA) - self.__cost(self, solutionB)
 
-        indice_local_aux = perturba(temperatures, indice_local, interator)
+    @staticmethod
+    def __randomize(solution):
+        random_value = random.randint(-6, 6)
+        return (solution[0], random_value) if random.choice([True, False]) else (random_value, solution[1])
 
-        if indice_local == indice_local_aux:
-            counter_breaker += 1
-        else:
-            indice_local = indice_local_aux
-            counter_breaker = 0
+    def __diff_values(self, solution):
+        for i in range(0, self.MAX_INTERATIONS):
+            initial_solution = solution
+            solution = self.__randomize(solution)
+            diff_s = self.__diff_solution(self, initial_solution, solution)
 
-        if counter_breaker > LIMIT_REPEAT:
-            break
+            if diff_s > 0:
+                yield diff_s
 
-        if temperatures[indice_local] < temperatures[indice_melhor]:
-            indice_melhor = indice_local
-        interator = + 1
+    def __initial_temperature(self, solution):
+        SECRET = 4.48   # DESCRIBE THIS VARIABLE
+        diffs = self.__diff_values(self, solution)
+        l = list(diffs)
+        return SECRET * (sum(l) / len(l))
 
-    print "Minimum temp found: %d at index: %d" % (temperatures[indice_melhor], indice_melhor)
+    def execute(self, start):
+        solution = start
+        temperature = self.__initial_temperature(self, solution)
+        success_iterator = 0
 
+        for j in range(0, self.MAX_INTERATIONS):
+            for i in range(0, self.MAX_INTERATIONS):
+                new_solution = self.__randomize(solution)
+                diff_s = self.__diff_solution(self, new_solution, solution)
+
+                if diff_s <= 0 or math.exp(-diff_s / temperature) > random.randint(0, 1):
+                    solution = new_solution
+                    success_iterator = success_iterator + 1
+
+                if success_iterator >= self.MAX_SUCESS or i >= self.MAX_RANDOMIZE:  # equilibrium
+                    break
+
+            print("%d %f %f %f %f" % (j, temperature, self.__cost(self, solution), solution[0], solution[1]))
+
+            temperature = self.ALPHA * temperature
+
+            if success_iterator == 0:  # stop condition
+                break
