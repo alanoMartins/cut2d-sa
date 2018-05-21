@@ -14,6 +14,6 @@ for line in sys.stdin:
 # Scatter plot on top of lines
 plt.plot(x, y, 'r', zorder=1, lw=1)
 plt.scatter(x, y, s=1, zorder=2)
-plt.title('Temperature X Objective Function')
+plt.title('Cost X Iteration')
 
 plt.show()
